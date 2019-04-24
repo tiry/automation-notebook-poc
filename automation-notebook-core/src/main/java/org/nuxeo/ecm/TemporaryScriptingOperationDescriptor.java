@@ -10,5 +10,21 @@ public class TemporaryScriptingOperationDescriptor extends ScriptingOperationDes
 		this.source=code;	
 		this.aliases = new String[0];
 	}
+
+	@Override
+	public int hashCode() {
+		return this.id.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {		
+		TemporaryScriptingOperationDescriptor other = (TemporaryScriptingOperationDescriptor) obj;		
+		if (obj==null) {
+			return false;
+		}		
+		return other.id.equals(this.id);
+	}
+	
+	
 	
 }

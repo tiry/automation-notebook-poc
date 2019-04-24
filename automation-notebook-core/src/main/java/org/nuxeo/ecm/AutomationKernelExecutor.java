@@ -89,7 +89,9 @@ public class AutomationKernelExecutor {
         	String componentId = "org.nuxeo.automation.scripting.internals.AutomationScriptingComponent";
         	AutomationScriptingComponent component = (AutomationScriptingComponent) Framework.getRuntime().getComponent(componentId);
         	
+        	
         	// register
+        	//component.unregisterContribution(desc, "operation", null);
         	component.registerContribution(desc, "operation", null);
         	result.opId = opId;        	        	        	
         }       	

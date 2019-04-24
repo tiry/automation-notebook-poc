@@ -1,5 +1,6 @@
 package org.nuxeo.ecm;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -14,6 +15,7 @@ import org.nuxeo.ecm.automation.OperationException;
 import org.nuxeo.ecm.automation.OperationType;
 import org.nuxeo.ecm.automation.test.AutomationFeature;
 import org.nuxeo.ecm.core.api.CoreSession;
+import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.test.DefaultRepositoryInit;
 import org.nuxeo.ecm.core.test.annotations.Granularity;
 import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
@@ -101,7 +103,22 @@ public class TestAutomationKernelExecutor {
         // check that the script was deployed as an operation
         OperationType type = automationService.getOperation("Scripting.GetRoot");
         assertNotNull(type);
-                        
+        
+        // check impl
+        DocumentModel doc = (DocumentModel) automationService.run(ctx, "Scripting.GetRoot");
+        assertEquals("Domain", doc.getType());
+     
+        // update 
+        ctx.setInput(loadScript("opscript2.js"));
+        html = (String) automationService.run(ctx, AutomationKernelExecutor.ID);
+        assertTrue(html.contains("Scripting.GetRoot"));
+        assertTrue(html.contains("compiled"));
+                
+        // check impl
+        doc = (DocumentModel) automationService.run(ctx, "Scripting.GetRoot");
+        assertEquals("Root", doc.getType());
+     
+        
     }
 
 
