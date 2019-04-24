@@ -28,3 +28,4 @@ bin/
 *~bak
 *-bak
 *.bak
+automation-notebook-core/nashorn_code_cache

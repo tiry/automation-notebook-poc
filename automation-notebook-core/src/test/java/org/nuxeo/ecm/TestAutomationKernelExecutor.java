@@ -1,10 +1,7 @@
 package org.nuxeo.ecm;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -14,9 +11,9 @@ import org.junit.runner.RunWith;
 import org.nuxeo.ecm.automation.AutomationService;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.OperationException;
+import org.nuxeo.ecm.automation.OperationType;
 import org.nuxeo.ecm.automation.test.AutomationFeature;
 import org.nuxeo.ecm.core.api.CoreSession;
-import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.test.DefaultRepositoryInit;
 import org.nuxeo.ecm.core.test.annotations.Granularity;
 import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
@@ -61,9 +58,7 @@ public class TestAutomationKernelExecutor {
         assertTrue(html.contains("yo"));
         assertTrue(html.contains("Execution time"));
     }
-
-    
-    
+       
     @Test
     public void shouldExecJSAndReturnDocRendition() throws Exception {
     	
@@ -88,6 +83,25 @@ public class TestAutomationKernelExecutor {
 
         System.out.println(html);
         assertTrue(html.contains("Execution time"));
+    }
+
+
+    @Test
+    public void shouldRegisterOperation() throws Exception {
+    	
+        OperationContext ctx = new OperationContext(session);
+
+        // run the script with annotations
+        ctx.setInput(loadScript("opscript.js"));
+        String html = (String) automationService.run(ctx, AutomationKernelExecutor.ID);
+
+        assertTrue(html.contains("Scripting.GetRoot"));
+        assertTrue(html.contains("compiled"));
+        
+        // check that the script was deployed as an operation
+        OperationType type = automationService.getOperation("Scripting.GetRoot");
+        assertNotNull(type);
+                        
     }
 
 

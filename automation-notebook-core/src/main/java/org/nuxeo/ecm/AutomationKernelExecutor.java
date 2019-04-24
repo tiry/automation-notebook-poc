@@ -3,9 +3,13 @@ package org.nuxeo.ecm;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 import org.nuxeo.automation.scripting.api.AutomationScriptingService;
+import org.nuxeo.automation.scripting.internals.AutomationScriptingComponent;
+import org.nuxeo.automation.scripting.internals.ScriptingOperationDescriptor;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
@@ -35,11 +39,15 @@ public class AutomationKernelExecutor {
 	@Param(name = "path", required = false)
 	protected String path;
 
+	
+	
 	@OperationMethod
 	public String run(String content) throws Exception {
-
+		
+		PreProcessingResult preProcessedCode = preprocessCode(content);
+		
 		AutomationScriptingService service = Framework.getService(AutomationScriptingService.class);
-		InputStream script = IOUtils.toInputStream(content);
+		InputStream script = IOUtils.toInputStream(preProcessedCode.code);
 
 		long t0 = System.currentTimeMillis();
 		Object result = service.get(ctx).run(script);
@@ -48,9 +56,48 @@ public class AutomationKernelExecutor {
 		Map<String, Object> params = new HashMap<>();
 		params.put("t", t1 - t0);
 
+		
+		if (preProcessedCode.opId!=null) {
+			result = preProcessedCode;
+		}
+		
 		return renderResult(result, params);
 	}
 
+	protected class PreProcessingResult {
+		
+		protected String code;
+		protected String opId;
+				
+	}
+		
+	protected PreProcessingResult preprocessCode(String code) {
+		
+		PreProcessingResult result = new PreProcessingResult();
+		
+		code = code.trim();
+		
+        Pattern opPattern = Pattern.compile("@Operation\\(.*id.*=.*\"(.*)\".*\\)");
+        Matcher matcher = opPattern.matcher(code);
+        
+        if (matcher.lookingAt()) {
+        	String opId =matcher.group(1);
+        	code = matcher.replaceFirst("");
+        	
+        	ScriptingOperationDescriptor desc = new TemporaryScriptingOperationDescriptor(opId, code);
+             	
+        	String componentId = "org.nuxeo.automation.scripting.internals.AutomationScriptingComponent";
+        	AutomationScriptingComponent component = (AutomationScriptingComponent) Framework.getRuntime().getComponent(componentId);
+        	
+        	// register
+        	component.registerContribution(desc, "operation", null);
+        	result.opId = opId;        	        	        	
+        }       	
+        
+        result.code=code;        
+		return result;
+	}
+	
 	protected String renderResult(Object result, Map<String, Object> params) throws RenderingException {
 
 		FMRenderer renderer = new FMRenderer();
@@ -62,6 +109,9 @@ public class AutomationKernelExecutor {
 		} else if (result instanceof DocumentModelList) {
 			params.put("docs", result);
 			return renderer.render("notebook/docs.ftl", params);
+		} else if (result instanceof PreProcessingResult) {		
+			params.put("opId", ((PreProcessingResult)result).opId);
+			return renderer.render("notebook/opregister.ftl", params);
 		} else {
 			return renderer.render("notebook/default.ftl", params);
 		}
