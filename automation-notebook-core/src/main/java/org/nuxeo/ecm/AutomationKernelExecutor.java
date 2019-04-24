@@ -44,24 +44,30 @@ public class AutomationKernelExecutor {
 	@OperationMethod
 	public String run(String content) throws Exception {
 		
-		PreProcessingResult preProcessedCode = preprocessCode(content);
+		NoteBookConsole.initMemoryLog();
 		
-		AutomationScriptingService service = Framework.getService(AutomationScriptingService.class);
-		InputStream script = IOUtils.toInputStream(preProcessedCode.code);
-
-		long t0 = System.currentTimeMillis();
-		Object result = service.get(ctx).run(script);
-		long t1 = System.currentTimeMillis();
-
-		Map<String, Object> params = new HashMap<>();
-		params.put("t", t1 - t0);
-
-		
-		if (preProcessedCode.opId!=null) {
-			result = preProcessedCode;
+		try {
+			PreProcessingResult preProcessedCode = preprocessCode(content);
+			
+			AutomationScriptingService service = Framework.getService(AutomationScriptingService.class);
+			InputStream script = IOUtils.toInputStream(preProcessedCode.code);
+	
+			long t0 = System.currentTimeMillis();
+			Object result = service.get(ctx).run(script);
+			long t1 = System.currentTimeMillis();
+	
+			Map<String, Object> params = new HashMap<>();
+			params.put("t", t1 - t0);
+	
+			
+			if (preProcessedCode.opId!=null) {
+				result = preProcessedCode;
+			}
+			
+			return renderResult(result, params);
+		} finally {
+			NoteBookConsole.cleanMemoryLog();
 		}
-		
-		return renderResult(result, params);
 	}
 
 	protected class PreProcessingResult {
@@ -104,6 +110,7 @@ public class AutomationKernelExecutor {
 
 		FMRenderer renderer = new FMRenderer();
 		params.put("result", result);
+		params.put("logs", NoteBookConsole.getMemoryLog());
 
 		if (result instanceof DocumentModel) {
 			params.put("doc", result);

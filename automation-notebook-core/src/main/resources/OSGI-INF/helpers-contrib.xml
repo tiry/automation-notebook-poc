@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<component name="org.nuxeo.ecm.operation.automationkernelexecutor.contextContrib" version="1.0">
+
+  <require>org.nuxeo.ecm.core.automation.scripting.contextContrib</require>
+
+  <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent"
+             point="contextHelpers">
+    <contextHelper id="Console" class="org.nuxeo.ecm.NoteBookConsole"/>
+  </extension>
+
+</component>

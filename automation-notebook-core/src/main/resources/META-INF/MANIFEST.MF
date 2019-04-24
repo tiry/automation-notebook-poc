@@ -6,4 +6,5 @@ Bundle-Version: 1.0.0
 Bundle-Name: automation-notebook-core
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.nuxeo.ecm.automation-notebook-core;singleton=true
-Nuxeo-Component: OSGI-INF/automationkernelexecutor-operation-contrib.xml
+Nuxeo-Component: OSGI-INF/automationkernelexecutor-operation-contrib.xml,
+ OSGI-INF/helpers-contrib.xml
