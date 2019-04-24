@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.nuxeo.automation.scripting.api.AutomationScriptingService;
+import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
@@ -30,6 +31,9 @@ public class AutomationKernelExecutor {
     @Context
     protected CoreSession session;
 
+    @Context
+    protected OperationContext ctx;
+    
     @Param(name = "path", required = false)
     protected String path;
 
@@ -44,7 +48,7 @@ public class AutomationKernelExecutor {
     	
     	long t0 = System.currentTimeMillis();
     	
-    	Object result = service.get(session).run(script);
+    	Object result = service.get(ctx).run(script);
     	
     	long t1 = System.currentTimeMillis();
     	
@@ -63,10 +67,12 @@ public class AutomationKernelExecutor {
     	params.put("result", result);
     	
     	if (result instanceof DocumentModel) {
-    		return renderer.render("notebook/default.ftl", params);
+    		params.put("doc", result);
+    		return renderer.render("notebook/doc.ftl", params);
     	} else {
     		return renderer.render("notebook/default.ftl", params);	
     	}
+    	
     }
     
 }
