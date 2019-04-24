@@ -19,8 +19,14 @@ class NuxeoKernel(Kernel):
 
     def start(self):
         super(NuxeoKernel, self).start()
-        self.nuxeo = Nuxeo(host='http://demo.nuxeo.com/nuxeo/',auth=('Administrator', 'Administrator'))    
+        self.nuxeo = Nuxeo(host='http://127.0.0.1:8080/nuxeo/',auth=('Administrator', 'Administrator'))    
         self.log.error("Nuxeo client started")
+
+    def call_Nuxeo(self, code):
+        operation = self.nuxeo.operations.new('Automation.KernelExecutor')
+        operation.params = {'path': '/foo'}
+        operation.input_obj = code
+        return operation.execute().get('value')
 
     def do_execute(self, code, silent, store_history=True, user_expressions=None,
                    allow_stdin=False):
@@ -28,15 +34,15 @@ class NuxeoKernel(Kernel):
         # message format: https://github.com/jupyter/jupyter_client/blob/master/jupyter_client/session.py#L657
         # https://jupyter-client.readthedocs.io/en/stable/messaging.html
         if not silent:
-            doc = self.nuxeo.documents.get(path=code)            
+
+            html = self.call_Nuxeo(code)
+
             #stream_content = {'name': 'stdout', 'text': doc.properties}
-            stream_content = {'name': 'stdout', 'text': code + doc.uid}
+            #stream_content = {'name': 'stdout', 'text': code + doc.uid}
             #self.send_response(self.iopub_socket, 'stream', stream_content)
             
             display_content = {'data': { \
-                                        'application/json': {'uid' : doc.uid},\
-                                        'text/plain': "Youhou",\
-                                        'text/html': "<b>You</b>hou",\
+                                        'text/html': html,\
                                          }, 'metadata' : { 'application/json' : { 'expanded': True } }}            
             self.send_response(self.iopub_socket, 'display_data', display_content)
 
