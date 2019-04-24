@@ -1,7 +1,4 @@
 
 Result=${result}
 
-<BR/>
-
-<I>Execution time = ${t} ms</I>
-
+<#include "/notebook/footer.ftl">

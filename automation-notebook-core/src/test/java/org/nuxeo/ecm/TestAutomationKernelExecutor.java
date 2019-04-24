@@ -1,12 +1,14 @@
 package org.nuxeo.ecm;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.ecm.automation.AutomationService;
@@ -34,20 +36,59 @@ public class TestAutomationKernelExecutor {
     @Inject
     protected AutomationService automationService;
 
+    String stupidScript = "function sayyo() {\n" + 
+    						"  return 'yo'\n" + 
+    					  "}; \n" + 
+    					  "sayyo();";
+
+    
+    String docScript = "function run(input, params) {\n" + 
+						"  var root = Repository.GetDocument(null, {\n" + 
+						"        \"value\" : \"/\"\n" + 
+						"    });" + 
+						"}; \n" + 
+						"sayyo();";
+
+    protected String loadScript(String name) throws Exception {
+    	return IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream(name));    	
+    }
+    
     @Test
-    public void shouldCallTheOperation() throws OperationException {
+    public void shouldExecJSAndReturnString() throws OperationException {
         OperationContext ctx = new OperationContext(session);
-        DocumentModel doc = (DocumentModel) automationService.run(ctx, AutomationKernelExecutor.ID);
-        assertEquals("/", doc.getPathAsString());
+        ctx.setInput(stupidScript);
+        String html = (String) automationService.run(ctx, AutomationKernelExecutor.ID);
+        assertTrue(html.contains("yo"));
+        assertTrue(html.contains("Execution time"));
     }
 
+    
+    
     @Test
-    public void shouldCallWithParameters() throws OperationException {
-        final String path = "/default-domain";
+    public void shouldExecJSAndReturnDocRendition() throws Exception {
+    	
         OperationContext ctx = new OperationContext(session);
-        Map<String, Object> params = new HashMap<>();
-        params.put("path", path);
-        DocumentModel doc = (DocumentModel) automationService.run(ctx, AutomationKernelExecutor.ID, params);
-        assertEquals(path, doc.getPathAsString());
+
+        ctx.setInput(loadScript("docscript.js"));
+        String html = (String) automationService.run(ctx, AutomationKernelExecutor.ID);
+
+        System.out.println(html);
+        assertTrue(html.contains("Domain"));
+        assertTrue(html.contains("Execution time"));
     }
+
+    
+    @Test
+    public void shouldExecJSAndReturnDocListRendition() throws Exception {
+    	
+        OperationContext ctx = new OperationContext(session);
+
+        ctx.setInput(loadScript("doclistscript.js"));
+        String html = (String) automationService.run(ctx, AutomationKernelExecutor.ID);
+
+        System.out.println(html);
+        assertTrue(html.contains("Execution time"));
+    }
+
+
 }

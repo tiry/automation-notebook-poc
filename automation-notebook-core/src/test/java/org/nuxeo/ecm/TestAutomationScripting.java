@@ -29,6 +29,9 @@ public class TestAutomationScripting {
     protected CoreSession session;
 
     @Inject
+    AutomationScriptingService scripting;
+
+    @Inject
     protected AutomationService automationService;
 
     @Test
@@ -57,7 +60,7 @@ public class TestAutomationScripting {
 
         String content ="function run(input, params) {\n" + 
         		"\n" + 
-        		"    return Document.Query(\"select * from Document\")\n" + 
+        		"    return Document.Query(null,{\"query\" : \"select * from Document\"})\n" + 
         		"}\n" + 
         		"run()";
         
