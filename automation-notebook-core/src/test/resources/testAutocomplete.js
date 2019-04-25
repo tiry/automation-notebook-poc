@@ -1,0 +1,8 @@
+
+function Docfun() {
+
+}
+
+var DocA;
+
+

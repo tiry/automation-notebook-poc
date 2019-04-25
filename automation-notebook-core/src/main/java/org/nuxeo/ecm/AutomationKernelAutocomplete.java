@@ -82,12 +82,40 @@ public class AutomationKernelAutocomplete {
 		return names;
 	}
 
-	protected List<String> getOperationNames() {
+	protected String prepopulateSignature(OperationType ot) throws Exception {
+		
+		StringBuffer sb = new StringBuffer("(");
+		
+		String input = ot.getInputType();
+		if ("document".equals(input)) {
+			sb.append("doc");
+		} else if ("documents".equals(input)) {
+			sb.append("docs");
+		} else if ("blob".equals(input)) {
+			sb.append("blob");
+		} else if ("blobs".equals(input)) {
+			sb.append("blobs");
+		} else if ("void".equals(input)) {
+			sb.append("null");			
+		}
+
+		sb.append(",{");
+		
+		for (org.nuxeo.ecm.automation.OperationDocumentation.Param param : ot.getDocumentation().getParams()) {
+			sb.append("'" + param.getName() + "' : null,");
+		}		
+		
+		sb.append("})");
+		return sb.toString();
+	}
+	
+	protected List<String> getOperationNames() throws Exception {
 
 		List<String> names = new ArrayList<>();
 		AutomationService service = Framework.getService(AutomationService.class);
-		for (OperationType ot : service.getOperations()) {
+		for (OperationType ot : service.getOperations()) {		
 			names.add(ot.getId());
+			//names.add(ot.getId() + prepopulateSignature(ot));
 		}
 		for (OperationChain oc : service.getOperationChains()) {
 			names.add(oc.getId());
