@@ -7,9 +7,9 @@ class NuxeoKernel(Kernel):
     language = 'no-op'
     language_version = '0.1'
     language_info = {
-        'name': 'Any text',
-        'mimetype': 'text/plain',
-        'file_extension': '.txt',
+        'name': 'javascript',
+        'mimetype': 'text/javascript',
+        'file_extension': '.js',
     }
     banner = "Nuxeo kernel - run automation scripts"    
 

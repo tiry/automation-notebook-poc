@@ -1,5 +1,7 @@
-{"argv":["python","-m","nuxeokernel", "-f", "{connection_file}"],
+{
+ "argv":["python","-m","nuxeokernel", "-f", "{connection_file}"],
  "display_name":"Nuxeo Automation",
  "language": "javascript",
- "codemirror_mode": {"name": "javascript", "json": true}
+ "_codemirror_mode": {"name": "javascript", "json": true},
+ "codemirror_mode": "python"
 }

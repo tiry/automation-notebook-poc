@@ -38,4 +38,11 @@ In order to leverage Notebook interface, all Nuxeo output are for now done using
 See [this sample](samples/TestingAutomation.ipynb).
 
 
+### Open questions
 
+ - Implement the `ContentsManager` interface on Nuxeo?
+    - see [pgcontents](https://github.com/quantopian/pgcontents) 
+ - State Management: keep transient context between calls
+ - Leverage existing client side extensions
+ 	- https://jupyter-contrib-nbextensions.readthedocs.io/en/latest/
+ - 
