@@ -19,6 +19,7 @@ import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.platform.rendering.api.RenderingException;
 import org.nuxeo.runtime.api.Framework;
 
@@ -35,11 +36,6 @@ public class AutomationKernelExecutor {
 
 	@Context
 	protected OperationContext ctx;
-
-	@Param(name = "path", required = false)
-	protected String path;
-
-	
 	
 	@OperationMethod
 	public String run(String content) throws Exception {
@@ -53,10 +49,18 @@ public class AutomationKernelExecutor {
 			InputStream script = IOUtils.toInputStream(preProcessedCode.code);
 	
 			long t0 = System.currentTimeMillis();
-			Object result = service.get(ctx).run(script);
-			long t1 = System.currentTimeMillis();
-	
+			Object result=null;
 			Map<String, Object> params = new HashMap<>();
+
+			try {
+				result = service.get(ctx).run(script);
+			} catch (NuxeoException e) {
+				long t1 = System.currentTimeMillis();
+				params.put("t", t1 - t0);				
+				return renderResult(e, params);
+			}
+			
+			long t1 = System.currentTimeMillis();	
 			params.put("t", t1 - t0);
 	
 			
@@ -121,6 +125,10 @@ public class AutomationKernelExecutor {
 		} else if (result instanceof PreProcessingResult) {		
 			params.put("opId", ((PreProcessingResult)result).opId);
 			return renderer.render("notebook/opregister.ftl", params);
+		} else if (result instanceof NuxeoException) {			
+			NuxeoException e = (NuxeoException)result;							
+			params.put("e", e);			
+			return renderer.render("notebook/error.ftl", params);
 		} else {
 			return renderer.render("notebook/default.ftl", params);
 		}

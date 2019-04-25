@@ -60,7 +60,18 @@ public class TestAutomationKernelExecutor {
         assertTrue(html.contains("yo"));
         assertTrue(html.contains("Execution time"));
     }
-       
+
+    @Test
+    public void shouldRaiseError() throws OperationException {
+        OperationContext ctx = new OperationContext(session);
+        ctx.setInput("IDoNotExist();");
+        String html = (String) automationService.run(ctx, AutomationKernelExecutor.ID);
+
+        System.out.println(html);
+        //assertTrue(html.contains("yo"));
+        //assertTrue(html.contains("Execution time"));
+    }
+
     @Test
     public void shouldExecJSAndReturnDocRendition() throws Exception {
     	
