@@ -36,6 +36,8 @@ public class AutomationKernelAutocomplete {
 
 	public static final String ID = "Automation.KernelAutocomplete";
 
+	protected static final boolean addSignature = true;
+
 	protected static List<String> jsReservedKeyWords = Arrays.asList("break", "case", "catch", "class", "const",
 			"continue", "debugger", "default", "delete", "do", "else", "export", "extends", "finally", "for",
 			"function", "if", "import", "in", "instanceof", "new", "return", "super", "switch", "this", "throw", "try",
@@ -95,7 +97,7 @@ public class AutomationKernelAutocomplete {
 			sb.append("blob");
 		} else if ("blobs".equals(input)) {
 			sb.append("blobs");
-		} else if ("void".equals(input)) {
+		} else if ("void".equals(input) || input==null) {
 			sb.append("null");			
 		}
 
@@ -113,12 +115,12 @@ public class AutomationKernelAutocomplete {
 
 		List<String> names = new ArrayList<>();
 		AutomationService service = Framework.getService(AutomationService.class);
-		for (OperationType ot : service.getOperations()) {		
-			names.add(ot.getId());
-			//names.add(ot.getId() + prepopulateSignature(ot));
-		}
-		for (OperationChain oc : service.getOperationChains()) {
-			names.add(oc.getId());
+		for (OperationType ot : service.getOperations()) {
+			if (addSignature) {
+				names.add(ot.getId() + prepopulateSignature(ot));	
+			} else {
+				names.add(ot.getId());				
+			}			
 		}
 		return names;
 	}
