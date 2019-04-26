@@ -1,8 +1,10 @@
 ### About
 
+#### Goal
+
 The goal of this repository is to build a POC of what a Jupyther Notebook for Automation could be.
 
-### Why
+#### Why
 
 Jupyter Notebook are a nice way to test and build a ML Pipeline:
 
@@ -15,26 +17,6 @@ In a sense the goal is to try a similar approach with an Automation Scripting:
  - prepare the data that is needed in the repository so that the Operation can run
  - code the operation using scripting
  - test the operation
-
-### POC Architecture:
-
-The current POC uses a [wrapper around the default python Kernel](https://jupyter-client.readthedocs.io/en/stable/wrapperkernels.html) rather than building a complete custom kernel.
-The idea is that the kernel just acts as a proxy to the Nuxeo Server.
-
-The Nuxeo Server is exposing a custom operation that takes care of:
-
- - compile and execute the code
- - register the operation is neeed
- - return an HTML rendered result
-
-In order to leverage Notebook interface, all Nuxeo output are for now done using HTML that is server side rendered by Nuxeo using freemarker.
-
-    NoteBook ==> ZeroMQ ==> nuxeokernel ==> nuxeo python client ==> AutomationKernelExecutor
-
-### Sample
-
-See [this sample](samples/TestingAutomation.ipynb).
-
 
 ### Using the Automation Notebook
 
@@ -108,7 +90,7 @@ Most of the time, your operation can not work without a context to be establishe
 
 For that you can use a script cell that will be responsible for doing the setup: since the side effect on the Nuxeo server are persisted you can use the scripting to do the setup.
 
-![setup](imgs/setuo.png)
+![setup](imgs/setup.png)
 
 **Logs**
 
@@ -122,6 +104,24 @@ The idea is to use additional code cells to contain the test cases for your oper
 
 For now there is no specific Test feature: this may come in the future.
 
+### Sample
+
+See [this sample](samples/TestingAutomation.ipynb).
+
+### POC Architecture:
+
+The current POC uses a [wrapper around the default python Kernel](https://jupyter-client.readthedocs.io/en/stable/wrapperkernels.html) rather than building a complete custom kernel.
+The idea is that the kernel just acts as a proxy to the Nuxeo Server.
+
+The Nuxeo Server is exposing a custom operation that takes care of:
+
+ - compile and execute the code
+ - register the operation is neeed
+ - return an HTML rendered result
+
+In order to leverage Notebook interface, all Nuxeo output are for now done using HTML that is server side rendered by Nuxeo using freemarker.
+
+    NoteBook ==> ZeroMQ ==> nuxeokernel ==> nuxeo python client ==> AutomationKernelExecutor
 
 ### Open questions
 
