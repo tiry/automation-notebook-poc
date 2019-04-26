@@ -24,6 +24,11 @@ public class TemporaryScriptingOperationDescriptor extends ScriptingOperationDes
 		}		
 		return other.id.equals(this.id);
 	}
+
+	@Override
+	public String toString() {
+		return "id:" + id + "\n" + source;
+	}
 	
 	
 	

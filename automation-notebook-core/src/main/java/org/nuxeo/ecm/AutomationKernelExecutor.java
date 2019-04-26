@@ -62,8 +62,7 @@ public class AutomationKernelExecutor {
 			
 			long t1 = System.currentTimeMillis();	
 			params.put("t", t1 - t0);
-	
-			
+				
 			if (preProcessedCode.opId!=null) {
 				result = preProcessedCode;
 			}
@@ -83,8 +82,7 @@ public class AutomationKernelExecutor {
 		
 	protected PreProcessingResult preprocessCode(String code) {
 		
-		PreProcessingResult result = new PreProcessingResult();
-		
+		PreProcessingResult result = new PreProcessingResult();		
 		code = code.trim();
 		
         Pattern opPattern = Pattern.compile("@Operation\\(.*id.*=.*\"(.*)\".*\\)");
@@ -92,17 +90,11 @@ public class AutomationKernelExecutor {
         
         if (matcher.lookingAt()) {
         	String opId =matcher.group(1);
-        	code = matcher.replaceFirst("");
-        	
-        	ScriptingOperationDescriptor desc = new TemporaryScriptingOperationDescriptor(opId, code);
-             	
-        	String componentId = "org.nuxeo.automation.scripting.internals.AutomationScriptingComponent";
-        	AutomationScriptingComponent component = (AutomationScriptingComponent) Framework.getRuntime().getComponent(componentId);
-        	
-        	
-        	// register
-        	//component.unregisterContribution(desc, "operation", null);
-        	component.registerContribution(desc, "operation", null);
+        	code = matcher.replaceFirst("");        	
+        	if (code.startsWith("\n")) {
+        		code=code.substring(1);
+        	}
+        	AutomationHelper.register(opId, code);
         	result.opId = opId;        	        	        	
         }       	
         
@@ -132,7 +124,6 @@ public class AutomationKernelExecutor {
 		} else {
 			return renderer.render("notebook/default.ftl", params);
 		}
-
 	}
 
 }

@@ -1,14 +1,21 @@
 package org.nuxeo.ecm;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.nuxeo.automation.scripting.internals.ScriptingOperationImpl;
+import org.nuxeo.automation.scripting.internals.ScriptingOperationTypeImpl;
+import org.nuxeo.ecm.automation.AutomationAdmin;
 import org.nuxeo.ecm.automation.AutomationService;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.OperationException;
@@ -19,6 +26,7 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.test.DefaultRepositoryInit;
 import org.nuxeo.ecm.core.test.annotations.Granularity;
 import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
+import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
@@ -128,7 +136,51 @@ public class TestAutomationKernelExecutor {
         // check impl
         doc = (DocumentModel) automationService.run(ctx, "Scripting.GetRoot");
         // FAIL!
-        //assertEquals("Root", doc.getType());
+        assertEquals("Root", doc.getType());
+     
+        
+    }
+    
+    @Test
+    public void shouldRegisterAndUpdateOperation() throws Exception {
+    	
+        OperationContext ctx = new OperationContext(session);
+        Map<String, Object> params = new HashMap<>();
+        String opId = "Scripting.fromJUnit";
+        
+        // check that the operation does not exist
+        assertFalse(automationService.hasOperation(opId));
+        
+        // run the script with annotations
+        ctx.setInput("@Operation(id = \""+ opId +"\")\nfunction run(input,params){ return 'v1';};");
+        String html = (String) automationService.run(ctx, AutomationKernelExecutor.ID);
+
+        assertTrue(html.contains(opId));
+        assertTrue(html.contains("compiled"));
+        
+        // check that the script was deployed as an operation
+        assertTrue(automationService.hasOperation(opId));
+        OperationType type = automationService.getOperation(opId);
+        assertNotNull(type);
+        
+        // check impl
+        ctx = new OperationContext(session);
+        String res = (String) automationService.run(ctx, opId,params);
+        assertEquals("v1", res);
+     
+        // update 
+        ctx = new OperationContext(session);
+        ctx.setInput("@Operation(id = \""+ opId +"\")\nfunction run(input,params){ return 'v2';};");
+        html = (String) automationService.run(ctx, AutomationKernelExecutor.ID);
+        assertTrue(html.contains(opId));
+        assertTrue(html.contains("compiled"));
+                
+        // check impl
+        ctx = new OperationContext(session);
+        //ScriptingOperationTypeImpl sopt = (ScriptingOperationTypeImpl) automationService.getOperation(opId);        
+        //ScriptingOperationImpl sop = (ScriptingOperationImpl) sopt.newInstance(ctx, params);
+        res = (String) automationService.run(ctx, opId, params);
+        assertEquals("v2", res);
      
         
     }
