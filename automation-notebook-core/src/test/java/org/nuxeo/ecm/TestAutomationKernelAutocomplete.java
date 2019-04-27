@@ -53,4 +53,19 @@ public class TestAutomationKernelAutocomplete {
 
 	}
 
+	@Test
+	public void shouldProvideSuggestionsWithDotedNames() throws Exception {
+		OperationContext ctx = new OperationContext(session);
+
+		ctx.setInput(loadScript("testAutocomplete.js"));
+		Map<String, String> params = new HashMap<>();
+		params.put("prefix", "Document.");
+
+		String suggestions = (String) automationService.run(ctx, AutomationKernelAutocomplete.ID, params);
+
+		assertTrue(suggestions.contains("Document.Query"));
+		assertTrue(suggestions.contains("Document.Create"));
+
+	}
+
 }

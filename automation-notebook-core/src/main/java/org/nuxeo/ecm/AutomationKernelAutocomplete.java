@@ -3,6 +3,7 @@ package org.nuxeo.ecm;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -115,13 +116,21 @@ public class AutomationKernelAutocomplete {
 
 		List<String> names = new ArrayList<>();
 		AutomationService service = Framework.getService(AutomationService.class);
-		for (OperationType ot : service.getOperations()) {
+		for (OperationType ot : service.getOperations()) {			
 			if (addSignature) {
-				names.add(ot.getId() + prepopulateSignature(ot));	
+				String signature = prepopulateSignature(ot);				
+				names.add(ot.getId() + signature);	
+				for (String alias : ot.getAliases()) {
+					names.add(alias + signature);
+				}
 			} else {
 				names.add(ot.getId());				
+				for (String alias : ot.getAliases()) {
+					names.add(alias);
+				}
 			}			
 		}
+		Collections.sort(names);
 		return names;
 	}
 
@@ -150,7 +159,7 @@ public class AutomationKernelAutocomplete {
 				suggestions.add(op);
 			}
 		}
-		
+				
 		return suggestions.toString();
 	}
 

@@ -46,7 +46,17 @@ In case of error, the full stack trace should be available:
 
 ![errors](imgs/error.png)
 
-#### Context
+When using the integrated CodeMirror editor, you can use the `TAB` key to trigger suggestions/autocomplete.
+The feature relies on a custom Nuxeo operation that determine the suggestions based on:
+
+ - standard JS reserved keywords
+ - variable and function names defined inside the script
+ - Automation Operation defined on the server side
+ - (schema and fields names to be added)
+
+![suggest](imgs/suggest.png)
+
+#### Context & Persistence
 
 The Automation Script code is executed and thrown away by the Nuxeo server:
 
