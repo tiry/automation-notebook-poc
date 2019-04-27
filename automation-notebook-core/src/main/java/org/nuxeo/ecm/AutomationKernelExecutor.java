@@ -40,7 +40,9 @@ public class AutomationKernelExecutor {
 	@OperationMethod
 	public String run(String content) throws Exception {
 		
+		// init NB specific Helpers
 		NoteBookConsole.initMemoryLog();
+		AssertHelper.initMemoryLog();
 		
 		try {
 			PreProcessingResult preProcessedCode = preprocessCode(content);
@@ -70,6 +72,7 @@ public class AutomationKernelExecutor {
 			return renderResult(result, params);
 		} finally {
 			NoteBookConsole.cleanMemoryLog();
+			AssertHelper.cleanMemoryLog();
 		}
 	}
 
@@ -107,7 +110,8 @@ public class AutomationKernelExecutor {
 		FMRenderer renderer = new FMRenderer();
 		params.put("result", result);
 		params.put("logs", NoteBookConsole.getMemoryLog());
-
+		params.put("asserts", AssertHelper.getMemoryLog());
+		
 		if (result==null) {
 			return renderer.render("notebook/null.ftl", params);
 		} else if (result instanceof DocumentModel) {

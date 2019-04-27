@@ -112,7 +112,9 @@ There is currently no breakpoint feature, but the `Console` object is overriden 
 
 The idea is to use additional code cells to contain the test cases for your operation.
 
-For now there is no specific Test feature: this may come in the future.
+You can use the `Assert` context helper to generate assertion and get a visual display of your tests results:
+
+![asserts](imgs/asserts.png)
 
 ### Sample
 

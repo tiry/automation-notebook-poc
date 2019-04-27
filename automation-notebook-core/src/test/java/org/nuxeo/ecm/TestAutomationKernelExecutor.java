@@ -88,7 +88,6 @@ public class TestAutomationKernelExecutor {
         ctx.setInput(loadScript("docscript.js"));
         String html = (String) automationService.run(ctx, AutomationKernelExecutor.ID);
 
-        System.out.println(html);
         assertTrue(html.contains("Domain"));
         assertTrue(html.contains("Execution time"));
     }
@@ -102,7 +101,6 @@ public class TestAutomationKernelExecutor {
         ctx.setInput(loadScript("doclistscript.js"));
         String html = (String) automationService.run(ctx, AutomationKernelExecutor.ID);
 
-        System.out.println(html);
         assertTrue(html.contains("Execution time"));
     }
 
@@ -185,5 +183,22 @@ public class TestAutomationKernelExecutor {
         
     }
 
+
+    
+    @Test
+    public void shouldExecuteAsserts() throws Exception {
+    	
+        OperationContext ctx = new OperationContext(session);
+
+        ctx.setInput(loadScript("asserts.js"));
+        String html = (String) automationService.run(ctx, AutomationKernelExecutor.ID);
+
+        System.out.println(html);
+        assertTrue(html.contains("parrot"));
+        assertTrue(html.contains("Assertion #1"));
+        assertTrue(html.contains("PASS: Assertion #3"));
+        assertTrue(html.contains("FAIL: Stupid"));
+
+    }
 
 }
