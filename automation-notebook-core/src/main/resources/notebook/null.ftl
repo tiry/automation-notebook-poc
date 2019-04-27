@@ -1,4 +1,4 @@
 
-Result=${res_str} (${res_type})
+No Result (Null)
 
 <#include "/notebook/footer.ftl">

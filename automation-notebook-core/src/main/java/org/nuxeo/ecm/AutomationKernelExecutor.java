@@ -108,7 +108,9 @@ public class AutomationKernelExecutor {
 		params.put("result", result);
 		params.put("logs", NoteBookConsole.getMemoryLog());
 
-		if (result instanceof DocumentModel) {
+		if (result==null) {
+			return renderer.render("notebook/null.ftl", params);
+		} else if (result instanceof DocumentModel) {
 			params.put("doc", result);
 			return renderer.render("notebook/doc.ftl", params);
 		} else if (result instanceof DocumentModelList) {
@@ -122,6 +124,8 @@ public class AutomationKernelExecutor {
 			params.put("e", e);			
 			return renderer.render("notebook/error.ftl", params);
 		} else {
+			params.put("res_type", result.getClass().getName());
+			params.put("res_str", result.toString());
 			return renderer.render("notebook/default.ftl", params);
 		}
 	}
