@@ -1,4 +1,4 @@
-package org.nuxeo.ecm;
+package org.nuxeo.ecm.automation.interactive.op;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;

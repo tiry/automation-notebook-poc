@@ -1,4 +1,4 @@
-package org.nuxeo.ecm;
+package org.nuxeo.ecm.automation.interactive.reload;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,7 @@ import org.nuxeo.automation.scripting.internals.AutomationScriptingComponent;
 import org.nuxeo.automation.scripting.internals.ScriptingOperationDescriptor;
 import org.nuxeo.ecm.automation.AutomationAdmin;
 import org.nuxeo.ecm.automation.AutomationService;
+import org.nuxeo.ecm.automation.interactive.TemporaryScriptingOperationDescriptor;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.model.ComponentInstance;
 

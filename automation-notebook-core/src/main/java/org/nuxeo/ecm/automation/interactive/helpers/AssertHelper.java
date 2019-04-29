@@ -1,4 +1,4 @@
-package org.nuxeo.ecm;
+package org.nuxeo.ecm.automation.interactive.helpers;
 
 import java.util.ArrayList;
 import java.util.List;

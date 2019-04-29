@@ -1,4 +1,4 @@
-package org.nuxeo.ecm;
+package org.nuxeo.ecm.automation.interactive;
 
 import java.io.File;
 import java.io.StringWriter;

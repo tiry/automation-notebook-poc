@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+import org.nuxeo.ecm.automation.interactive.op.AutomationKernelAutocomplete;
 
 public class TestParsing extends AutomationKernelAutocomplete {
 	
