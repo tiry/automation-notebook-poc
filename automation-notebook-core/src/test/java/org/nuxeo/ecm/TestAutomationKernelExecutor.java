@@ -13,9 +13,6 @@ import javax.inject.Inject;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.nuxeo.automation.scripting.internals.ScriptingOperationImpl;
-import org.nuxeo.automation.scripting.internals.ScriptingOperationTypeImpl;
-import org.nuxeo.ecm.automation.AutomationAdmin;
 import org.nuxeo.ecm.automation.AutomationService;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.OperationException;
@@ -27,7 +24,6 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.test.DefaultRepositoryInit;
 import org.nuxeo.ecm.core.test.annotations.Granularity;
 import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
-import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
@@ -76,9 +72,8 @@ public class TestAutomationKernelExecutor {
         ctx.setInput("IDoNotExist();");
         String html = (String) automationService.run(ctx, AutomationKernelExecutor.ID);
 
-        System.out.println(html);
-        //assertTrue(html.contains("yo"));
-        //assertTrue(html.contains("Execution time"));
+        //System.out.println(html);
+        assertTrue(html.contains("Unable to execute Automation Script"));
     }
 
     @Test
@@ -91,6 +86,8 @@ public class TestAutomationKernelExecutor {
 
         assertTrue(html.contains("Domain"));
         assertTrue(html.contains("Execution time"));
+        
+        //System.out.println(html);
     }
 
     
@@ -194,11 +191,24 @@ public class TestAutomationKernelExecutor {
         ctx.setInput(loadScript("asserts.js"));
         String html = (String) automationService.run(ctx, AutomationKernelExecutor.ID);
 
-        System.out.println(html);
         assertTrue(html.contains("parrot"));
         assertTrue(html.contains("Assertion #1"));
         assertTrue(html.contains("PASS: Assertion #3"));
         assertTrue(html.contains("FAIL: Stupid"));
+
+    }
+
+    
+    @Test
+    public void shouldLog() throws Exception {
+    	
+        OperationContext ctx = new OperationContext(session);
+
+        ctx.setInput(loadScript("logs.js"));
+        String html = (String) automationService.run(ctx, AutomationKernelExecutor.ID);
+
+        assertTrue(html.contains("This is an information"));
+        assertTrue(html.contains("This is a warning"));
 
     }
 

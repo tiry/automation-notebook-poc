@@ -7,9 +7,9 @@ import org.nuxeo.automation.scripting.helper.Console;
 
 public class NoteBookConsole extends Console {
 
-	protected static ThreadLocal<List<String>> memoryLog = new ThreadLocal<>();	
+	protected static ThreadLocal<List<LogEntry>> memoryLog = new ThreadLocal<>();	
 		
-	public static List<String> initMemoryLog() {
+	public static List<LogEntry> initMemoryLog() {
 		memoryLog.set(new ArrayList<>());
 		return getMemoryLog();
 	}
@@ -18,30 +18,16 @@ public class NoteBookConsole extends Console {
 		memoryLog.remove();
 	}
 
-	public static List<String> getMemoryLog() {
+	public static List<LogEntry> getMemoryLog() {
 		return memoryLog.get();
 	}
 	
 	protected void log(String level, String message) {
-		List<String> msgs = memoryLog.get();
+		List<LogEntry> msgs = memoryLog.get();
 		if (msgs==null) {
 			msgs = initMemoryLog();
-		}
-		
-		if ("ERR".equals(level)) {
-			message = "<div style=\"color:red\">" + message;
-		}
-		else if ("WARN".equals(level)) {
-			message = "<div style=\"color:orange\">" + message;
-		}
-		else if ("INFO".equals(level)) {
-			message = "<div style=\"color:black\">" + message;
-		}
-		else if ("TRC".equals(level)) {
-			message = "<div style=\"color:#999999\">" + message;
-		}
-		message = message + "</div>";		
-		msgs.add(message);
+		}		
+		msgs.add(new LogEntry(level, message));
 	}
 	
     public void error(String inWhat) {

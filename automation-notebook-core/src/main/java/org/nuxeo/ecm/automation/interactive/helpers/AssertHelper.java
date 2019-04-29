@@ -7,9 +7,9 @@ import org.nuxeo.ecm.automation.context.ContextHelper;
 
 public class AssertHelper implements ContextHelper {
 	
-	protected static ThreadLocal<List<String>> memoryLog = new ThreadLocal<>();	
+	protected static ThreadLocal<List<AssertEntry>> memoryLog = new ThreadLocal<>();	
 	
-	public static List<String> initMemoryLog() {
+	public static List<AssertEntry> initMemoryLog() {
 		memoryLog.set(new ArrayList<>());
 		return getMemoryLog();
 	}
@@ -18,28 +18,19 @@ public class AssertHelper implements ContextHelper {
 		memoryLog.remove();
 	}
 
-	public static List<String> getMemoryLog() {
+	public static List<AssertEntry> getMemoryLog() {
 		return memoryLog.get();
 	}
 	
 	protected boolean record(boolean result, String title) {
-		String logEntry = "<div ";
-		
-		if (result) {
-			logEntry = logEntry + " style='background-color:#99FF99; margin:1px;font-weight:bold;'> PASS: ";
-		} else {
-			logEntry = logEntry + " style='background-color:#FF4444; margin:1px;font-weight:bold;'  > FAIL: ";
-		}
-		if (title!=null) {
-			logEntry = logEntry + title;
-		}
-		logEntry = logEntry + "</div>";
+
+		// logEntry = logEntry + " style='background-color:#99FF99; margin:1px;font-weight:bold;'> PASS: ";
 			
-		List<String> msgs = memoryLog.get();
+		List<AssertEntry> msgs = memoryLog.get();
 		if (msgs==null) {
 			msgs = initMemoryLog();
-		}
-		msgs.add(logEntry);
+		}		
+		msgs.add(new AssertEntry(result, title));
 		
 		return result;
 	}
@@ -58,9 +49,5 @@ public class AssertHelper implements ContextHelper {
 
 	public boolean assertTrue(boolean condition, String title) {
 		return record(condition, title);
-	}
-	
-	public String sayHello() {
-		return "Hello";
-	}
+	}	
 }
