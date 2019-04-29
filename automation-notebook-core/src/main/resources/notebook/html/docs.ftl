@@ -20,4 +20,4 @@ Documents:
 
 </table>
 
-<#include "/notebook/footer.ftl">
+<#include "/notebook/html/footer.ftl">

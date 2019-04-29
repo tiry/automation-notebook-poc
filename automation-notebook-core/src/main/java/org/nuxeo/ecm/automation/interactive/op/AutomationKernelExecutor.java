@@ -109,32 +109,35 @@ public class AutomationKernelExecutor {
 		return result;
 	}
 	
+	@Param(name = "format", required = false)
+	protected String format = "html";
+
 	protected String renderResult(Object result, Map<String, Object> params) throws RenderingException {
 
-		FMRenderer renderer = new FMRenderer();
+		FMRenderer renderer = new FMRenderer(format);
 		params.put("result", result);
 		params.put("logs", NoteBookConsole.getMemoryLog());
 		params.put("asserts", AssertHelper.getMemoryLog());
 		
 		if (result==null) {
-			return renderer.render("notebook/null.ftl", params);
+			return renderer.render("null.ftl", params);
 		} else if (result instanceof DocumentModel) {
 			params.put("doc", result);
-			return renderer.render("notebook/doc.ftl", params);
+			return renderer.render("doc.ftl", params);
 		} else if (result instanceof DocumentModelList) {
 			params.put("docs", result);
-			return renderer.render("notebook/docs.ftl", params);
+			return renderer.render("docs.ftl", params);
 		} else if (result instanceof PreProcessingResult) {		
 			params.put("opId", ((PreProcessingResult)result).opId);
-			return renderer.render("notebook/opregister.ftl", params);
+			return renderer.render("opregister.ftl", params);
 		} else if (result instanceof NuxeoException) {			
 			NuxeoException e = (NuxeoException)result;							
 			params.put("e", e);			
-			return renderer.render("notebook/error.ftl", params);
+			return renderer.render("error.ftl", params);
 		} else {
 			params.put("res_type", result.getClass().getName());
 			params.put("res_str", result.toString());
-			return renderer.render("notebook/default.ftl", params);
+			return renderer.render("default.ftl", params);
 		}
 	}
 

@@ -14,9 +14,14 @@ public class FMRenderer {
 
 	protected FreemarkerEngine engine;
 
-	public FMRenderer() {
+	protected static final String ROOT = "notebook"; 
+	
+	protected final String format; 
+	
+	public FMRenderer(String format) {
 		engine = new FreemarkerEngine();
 		engine.setResourceLocator(new CLResourceLocator());
+		this.format=format;
 	}
 
 	public String render(String templateName, Map<String, Object> params) throws RenderingException {
@@ -26,7 +31,8 @@ public class FMRenderer {
 			params = new HashMap<String, Object>();
 		}
 
-		engine.render(templateName, params, writer);
+		String path = ROOT + "/" + format + "/" + templateName;
+		engine.render(path, params, writer);
 		return writer.toString();
 	}
 

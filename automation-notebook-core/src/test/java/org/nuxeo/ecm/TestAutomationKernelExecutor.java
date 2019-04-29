@@ -28,6 +28,9 @@ import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @RunWith(FeaturesRunner.class)
 @Features(AutomationFeature.class)
 @RepositoryConfig(init = DefaultRepositoryInit.class, cleanup = Granularity.METHOD)
@@ -99,7 +102,11 @@ public class TestAutomationKernelExecutor {
         ctx.setInput(loadScript("doclistscript.js"));
         String html = (String) automationService.run(ctx, AutomationKernelExecutor.ID);
 
+        //System.out.println(html);
         assertTrue(html.contains("Execution time"));
+        assertTrue(html.contains("Documents"));
+        assertTrue(html.contains("/default-domain/workspaces/test"));
+        assertTrue(html.contains("/default-domain/templates"));
     }
 
 
@@ -180,8 +187,6 @@ public class TestAutomationKernelExecutor {
      
         
     }
-
-
     
     @Test
     public void shouldExecuteAsserts() throws Exception {
@@ -210,6 +215,32 @@ public class TestAutomationKernelExecutor {
         assertTrue(html.contains("This is an information"));
         assertTrue(html.contains("This is a warning"));
 
+    }
+
+    @Test
+    public void shouldExecJSAndReturnDocListRenditionJSON() throws Exception {
+    	
+        OperationContext ctx = new OperationContext(session);
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("format", "json");
+        
+        ctx.setInput(loadScript("doclistscriptjson.js"));
+        String json = (String) automationService.run(ctx, AutomationKernelExecutor.ID, params);
+        
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode payload = objectMapper.readTree(json);
+        
+        assertTrue(payload.get("exec_time").asLong() > 0);
+        assertTrue(payload.get("type").asText().equals("documents"));        
+        assertTrue(payload.get("uids").isArray());
+        assertTrue(payload.get("asserts").isArray());
+        assertTrue(payload.get("logs").isArray());
+        
+        assertTrue(payload.get("logs").get(0).get("message").asText().equals("Yo"));
+        assertTrue(payload.get("asserts").get(0).get("message").asText().equals("MyAssert"));
+        //System.out.println(json);        
     }
 
 }
