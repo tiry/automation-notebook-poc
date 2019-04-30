@@ -26,6 +26,8 @@ public class AutomationNotebookDescriptor  implements Descriptor{
 
     String json;
     
+    ObjectMapper objectMapper;
+    
     protected List<PreProcessor.Result> code_cells = new ArrayList<>();
     
 	@Override
@@ -33,9 +35,16 @@ public class AutomationNotebookDescriptor  implements Descriptor{
 		return name;
 	}    
 	
+	protected ObjectMapper getMapper() {
+		if (objectMapper==null) {
+			objectMapper = new ObjectMapper();
+		}
+		return objectMapper;
+	}
+	
 	void parse() throws IOException {
 		PreProcessor processor = new PreProcessor();
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = getMapper();
         JsonNode nb = objectMapper.readTree(json);
         
         JsonNode cells = nb.get("cells");

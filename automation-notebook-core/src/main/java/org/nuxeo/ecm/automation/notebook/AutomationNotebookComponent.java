@@ -72,13 +72,16 @@ public class AutomationNotebookComponent extends DefaultComponent implements Aut
 		
 		for (PreProcessor.Result code: desc.getSetupCells()) {
 			String json = executor.run(session, code.getCode(), "json");
-			sb.append("'setup':" + json);
+			sb.append("\"setup\":" + json);
 		}
 
 		for (PreProcessor.Result code: desc.getTestCells()) {
 			String json = executor.run(session, code.getCode(), "json");
-			sb.append("'" + code.getId() + "':" + json);
+			sb.append(",\"" + code.getId() + "\":" + json);
 		}
+		
+		sb.append("}");
+						
 		return sb.toString();
 	}
 	
