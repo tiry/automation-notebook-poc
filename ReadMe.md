@@ -18,6 +18,29 @@ In a sense the goal is to try a similar approach with an Automation Scripting:
  - code the operation using scripting
  - test the operation
 
+#### What problem we want to solve
+
+Automation Scripting and it's current integration in Studio has some known limitations:
+
+ - debuging is not easy
+ - test cycle are slow
+ - there is no documentation associated to scripts, so maintenance is painful
+ - unit testing is complex
+
+Automation Notebook try to solve these issues by providing:
+
+ - inline Markdown documentation
+ 	- you can document your script and your usecases
+ - interactive execution
+ 	- direct execution of the script
+ - easy access to output
+ 	- result displayed as html
+ 	- logs
+ - instant reload/refresh
+ 	- no need for a full hot-reload
+ - write unit tests using scripting inside the Notebook
+ 	- write unit tests as part of the development cycle
+
 ### Using the Automation Notebook
 
 #### Nuxeo Kernel
@@ -115,6 +138,40 @@ The idea is to use additional code cells to contain the test cases for your oper
 You can use the `Assert` context helper to generate assertion and get a visual display of your tests results:
 
 ![asserts](imgs/asserts.png)
+
+**Notebook Testsuite**
+
+The idea is to be able to consider a Notebook as a Test & Deploy unit.
+
+Notebook contains:
+
+ - operation definition(s):
+ 	- annotated with `@Operation`
+ - setup script(s)
+ 	- annotated with `@Setup`
+ - test assertions(s)
+ 	- annotated with `@Test`
+
+The goal is to be able to contribute to Nuxeo a full NoteBook:
+
+
+    <extension target="org.nuxeo.ecm.automation.notebook.AutomationNotebookComponent"
+             point="notebooks">
+        <automationNotebook name="testNB" src="nb/TestingAutomation.ipynb"/>
+    </extension>
+
+The contribution shoud:
+
+ - register the container operation
+ - allow to run the tests
+
+For now, this will still require to  have a java project to:
+
+ - define the test class
+ - define what needs to be deployed
+ - run the tests
+
+However, we could consider doing the automation (maven plugin or ocp pipeline) to automatically run all the Notebooks contained in a Studio project.
 
 ### Sample
 
