@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.ecm.automation.notebook.AutomationNotebookComponent" version="1.0">
+
+  <require>org.nuxeo.automation.scripting.internals.AutomationScriptingComponent</require>
+
+  <implementation class="org.nuxeo.ecm.automation.notebook.AutomationNotebookComponent" />
+
+  <service>
+      <provide interface="org.nuxeo.ecm.automation.notebook.AutomationNotebookService" />
+  </service>
+
+  <extension-point name="notebooks">
+
+    <object
+      class="org.nuxeo.ecm.automation.notebook.AutomationNotebookDescriptor" />
+
+  </extension-point>
+
+</component>

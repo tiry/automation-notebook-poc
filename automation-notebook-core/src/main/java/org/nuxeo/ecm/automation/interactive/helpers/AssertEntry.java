@@ -14,6 +14,13 @@ public class AssertEntry {
 	public boolean isSuccess() {
 		return success;
 	}
+	
+	public String value() {
+		if (success) {
+			return "true";
+		}
+		return "false";
+	}
 
 	public String getMessage() {
 		return message;
