@@ -19,13 +19,10 @@ public class AssertHelper implements ContextHelper {
 	}
 
 	public static List<AssertEntry> getMemoryLog() {
-		return memoryLog.get();
+		return new ArrayList(memoryLog.get());
 	}
 	
 	protected boolean record(boolean result, String title) {
-
-		// logEntry = logEntry + " style='background-color:#99FF99; margin:1px;font-weight:bold;'> PASS: ";
-			
 		List<AssertEntry> msgs = memoryLog.get();
 		if (msgs==null) {
 			msgs = initMemoryLog();

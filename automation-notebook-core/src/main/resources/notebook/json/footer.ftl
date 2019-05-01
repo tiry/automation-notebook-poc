@@ -1,3 +1,4 @@
+ <#setting number_format="computer">
  , "exec_time" : ${t}
  , "asserts": [ 
  <#list asserts as assert>

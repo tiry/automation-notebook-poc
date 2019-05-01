@@ -19,7 +19,7 @@ public class NoteBookConsole extends Console {
 	}
 
 	public static List<LogEntry> getMemoryLog() {
-		return memoryLog.get();
+		return new ArrayList(memoryLog.get());
 	}
 	
 	protected void log(String level, String message) {

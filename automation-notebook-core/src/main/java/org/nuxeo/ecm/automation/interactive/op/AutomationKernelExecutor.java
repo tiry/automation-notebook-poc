@@ -40,7 +40,7 @@ public class AutomationKernelExecutor {
 	
 	@OperationMethod
 	public String run(String content) throws Exception {
-		return new NBScriptExecutor().run(ctx, content, format);
+		return new NBScriptExecutor().runAndRender(ctx, content, format);
 	}
 
 }

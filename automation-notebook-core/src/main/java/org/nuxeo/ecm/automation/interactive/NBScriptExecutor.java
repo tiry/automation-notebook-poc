@@ -19,12 +19,47 @@ import org.nuxeo.runtime.api.Framework;
 
 public class NBScriptExecutor {
 
-	public String run(CoreSession session, String content, String format) throws Exception {	
+	public String runAndRender(CoreSession session, String content, String format) throws Exception {
 		OperationContext ctx = new OperationContext(session);
-		return run(ctx, content, format);
+		return runAndRender(ctx, content, format);
+	}
+
+	public class ExecutionResult {
+
+		public static final String LOGS_KEY = "logs";
+		public static final String ASSERTS_KEY = "asserts";
+		public static final String TIME_KEY = "t";
+				
+		protected Object result;
+		protected Map<String, Object> params;
+
+		ExecutionResult(Object result, Map<String, Object> params) {
+			this.result = result;
+			this.params = params;
+		}
+		
+		public Object getOutcome() {
+			return result;
+		}
+		
+		public Map<String, Object> getParams() {
+			return params;
+		}
+	}
+
+	public ExecutionResult run(CoreSession session, String content) throws Exception {
+		OperationContext ctx = new OperationContext(session);
+		return run(ctx, content);
 	}
 	
-	public String run(OperationContext ctx, String content, String format) throws Exception {
+	protected void fillParams(Map<String, Object> params, long t0) {
+		long t1 = System.currentTimeMillis();
+		params.put(ExecutionResult.TIME_KEY, t1 - t0);
+		params.put(ExecutionResult.LOGS_KEY, NoteBookConsole.getMemoryLog());
+		params.put(ExecutionResult.ASSERTS_KEY, AssertHelper.getMemoryLog());
+	}
+	
+	public ExecutionResult run(OperationContext ctx, String content) throws Exception {
 
 		// init NB specific Helpers
 		NoteBookConsole.initMemoryLog();
@@ -43,33 +78,33 @@ public class NBScriptExecutor {
 
 			try {
 				result = service.get(ctx).run(script);
-			} catch (NuxeoException e) {
-				long t1 = System.currentTimeMillis();
-				params.put("t", t1 - t0);
-				return render(e, params, format);
+			} catch (NuxeoException e) {				
+				fillParams(params,t0);
+				return new ExecutionResult(e, params);
 			}
 
-			long t1 = System.currentTimeMillis();
-			params.put("t", t1 - t0);
-
+			fillParams(params,t0);			
 			if (preProcessedCode.getId() != null) {
 				result = preProcessedCode;
 			}
 
-			return render(result, params, format);
+			return new ExecutionResult(result, params);
 		} finally {
 			NoteBookConsole.cleanMemoryLog();
 			AssertHelper.cleanMemoryLog();
 		}
 	}
 
-	
-	protected String render(Object result, Map<String, Object> params, String format) throws RenderingException {
+	public String runAndRender(OperationContext ctx, String content, String format) throws Exception {
+		ExecutionResult res = run(ctx, content);
+		return render(res, format);
+	}
 
+	public String render(ExecutionResult res, String format) throws RenderingException {
+
+		Object result = res.result;
+		Map<String, Object> params = res.params;
 		FMRenderer renderer = new FMRenderer(format);
-		params.put("result", result);
-		params.put("logs", NoteBookConsole.getMemoryLog());
-		params.put("asserts", AssertHelper.getMemoryLog());
 
 		if (result == null) {
 			return renderer.render("null.ftl", params);
