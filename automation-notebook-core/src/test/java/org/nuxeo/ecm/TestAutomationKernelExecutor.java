@@ -248,7 +248,7 @@ public class TestAutomationKernelExecutor {
 
 
     @Test
-    public void shouldRegisterListener() throws Exception {
+    public void shouldRegisterAndDebugSyncListener() throws Exception {
     	
         OperationContext ctx = new OperationContext(session);
 
@@ -262,8 +262,32 @@ public class TestAutomationKernelExecutor {
         html = (String) automationService.run(ctx, AutomationKernelExecutor.ID);
         
         assertTrue(html.contains("from js listener"));
-        
+        assertTrue(html.contains("EventImpl"));
+        assertTrue(html.contains("\"newDoc\""));        
+    }
+
+    @Test
+    public void shouldRegisterAndDebugAsyncListener() throws Exception {
+    	
+        OperationContext ctx = new OperationContext(session);
+
+        ctx.setInput(loadScript("eventlistener.js"));
+        String html = (String) automationService.run(ctx, AutomationKernelExecutor.ID);        
+        assertTrue(html.contains("Scripting.Listener"));
+        assertTrue(html.contains("compiled"));
+
+                
+        ctx.setInput(loadScript("asynclistenertest.js"));
+        html = (String) automationService.run(ctx, AutomationKernelExecutor.ID);
+
         System.out.println(html);
+        
+        // need to find a way to collect logs from an other thread!
+        //assertTrue(html.contains("from js listener"));
+        //assertTrue(html.contains("EventImpl"));
+        //assertTrue(html.contains("\"newDoc\""));
+        
+
     }
 
 }

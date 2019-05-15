@@ -37,11 +37,28 @@ public class PreProcessor {
 	protected String getDebugHelperCode() {
 
 		StringBuffer sb = new StringBuffer();
-		
+
+		// init the Debug Ctx
 		sb.append("Debug.init(ctx);\n");
 		
 		return sb.toString();
 	}
+
+	protected String addWrapperCode(String code) {
+
+		StringBuffer sb = new StringBuffer();
+		
+		sb.append("function run(input, params) {\n");
+		sb.append("  Console.log('*** inside Wrapper ***');\n");
+		sb.append(getDebugHelperCode());
+		sb.append(code);
+		sb.append("  return run(input,params);\n");
+		sb.append("}\n");
+		
+		return sb.toString();
+	}
+
+
 	public Result preprocessCode(String code) {
 		
 		Result result = new Result();		
@@ -55,9 +72,9 @@ public class PreProcessor {
         	if (code.startsWith("\n")) {
         		code=code.substring(1);
         	}
-        	AutomationHelper.register(opId, code);
         	result.id = opId;
         	result.type = BlocType.OPERATION;
+
         } else {       		
 	        // setup
 	        matcher = setupPattern.matcher(code);        
@@ -81,7 +98,15 @@ public class PreProcessor {
 		        }       	
 	        }
         }
-        result.code=getDebugHelperCode() + code;        
+
+        if (result.type == BlocType.OPERATION) {
+        	code=addWrapperCode(code);
+        	AutomationHelper.register(result.id, code);
+        	result.code=code;
+        } else {
+        	result.code=getDebugHelperCode() + code;
+        	result.code=code;
+        }
 		return result;
 	}
 

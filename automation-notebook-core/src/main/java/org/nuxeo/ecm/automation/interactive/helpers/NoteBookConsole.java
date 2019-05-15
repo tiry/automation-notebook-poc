@@ -37,6 +37,19 @@ public class NoteBookConsole extends Console {
 		}		
 		msgs.add(new LogEntry("INFO", message));		
 	}
+
+    protected static String debugAsJson(Object ob) throws IOException {
+    	
+    	StringWriter writer = new StringWriter();
+		JsonGenerator jg = getFactory().createGenerator(writer);
+		
+		
+		jg.writeObject(ob);
+		jg.flush();
+		
+		return ob.getClass().getName() + ":" + writer.toString();
+    }
+
 	
 	protected void log(String level, String message) {
 		List<LogEntry> msgs = memoryLog.get();
@@ -71,9 +84,9 @@ public class NoteBookConsole extends Console {
         log("TRC", inWhat);
     }
     
-    protected JsonFactory jsonFactory;
+    protected static JsonFactory jsonFactory;
 
-    protected JsonFactory getFactory() {
+    protected static JsonFactory getFactory() {
 		if (jsonFactory==null) {
 	        JsonFactoryManager jsonFactoryManager = Framework.getService(JsonFactoryManager.class);
         	jsonFactory = jsonFactoryManager.getJsonFactory();

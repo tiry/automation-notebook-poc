@@ -4,6 +4,6 @@ function run(input, params) {
     Console.log("from js listener");
     Console.asJson(input);
     Console.asJson(params);
-    
-    Debug.dump();
+
+    Debug.dumpCtx();
 }
