@@ -31,6 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RunWith(FeaturesRunner.class)
 @Features(AutomationFeature.class)
 @RepositoryConfig(init = DefaultRepositoryInit.class, cleanup = Granularity.METHOD)
+@Deploy("org.nuxeo.ecm.webengine.core:OSGI-INF/json-service.xml")
 @Deploy({ "org.nuxeo.ecm.automation-notebook-core",
 		"org.nuxeo.ecm.automation-notebook-core-test:notebook-contrib.xml" })
 public class TestAutomationNotebook {

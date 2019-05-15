@@ -74,22 +74,22 @@ public class AutomationNotebookComponent extends DefaultComponent implements Aut
 		return desc;
 	}
 	
+	protected JsonFactory getFactory() {
+		if (jsonFactory==null) {
+	        JsonFactoryManager jsonFactoryManager = Framework.getService(JsonFactoryManager.class);
+	        jsonFactory = jsonFactoryManager.getJsonFactory();
+		}
+		return jsonFactory;
+	}
+	
 	public String validateNotebook(CoreSession session, String name) throws Exception {
 		AutomationNotebookDescriptor desc = getDescriptor(NB_XP, name);
 		NBScriptExecutor executor = new NBScriptExecutor();
-		
-		if (jsonFactory==null) {
-	        JsonFactoryManager jsonFactoryManager = Framework.getService(JsonFactoryManager.class);
-	        if (jsonFactoryManager==null) {
-	        	jsonFactory = new JsonFactory();	
-	        } else {
-	        	jsonFactory = jsonFactoryManager.getJsonFactory();
-	        }
-		}
-		
+	
 		StringWriter writer = new StringWriter();
-		JsonGenerator jg = jsonFactory.createGenerator(writer);
+		JsonGenerator jg = getFactory().createGenerator(writer);
 				
+	
 		StringBuffer sb = new StringBuffer();
 
 		jg.writeStartObject();

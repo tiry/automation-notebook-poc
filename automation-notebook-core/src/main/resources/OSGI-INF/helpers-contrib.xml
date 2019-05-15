@@ -8,6 +8,8 @@
              point="contextHelpers">
     <contextHelper id="Console" class="org.nuxeo.ecm.automation.interactive.helpers.NoteBookConsole"/>
     <contextHelper id="Assert" class="org.nuxeo.ecm.automation.interactive.helpers.AssertHelper"/>
+    <contextHelper id="Debug" class="org.nuxeo.ecm.automation.interactive.helpers.NBDebug"/>
+
   </extension>
 
 </component>

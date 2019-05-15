@@ -34,6 +34,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RunWith(FeaturesRunner.class)
 @Features(AutomationFeature.class)
 @RepositoryConfig(init = DefaultRepositoryInit.class, cleanup = Granularity.METHOD)
+@Deploy("org.nuxeo.ecm.webengine.core:OSGI-INF/json-service.xml")
 @Deploy("org.nuxeo.ecm.automation-notebook-core")
 public class TestAutomationKernelExecutor {
 
@@ -211,9 +212,11 @@ public class TestAutomationKernelExecutor {
 
         ctx.setInput(loadScript("logs.js"));
         String html = (String) automationService.run(ctx, AutomationKernelExecutor.ID);
-
+        
         assertTrue(html.contains("This is an information"));
         assertTrue(html.contains("This is a warning"));
+        assertTrue(html.contains("DocumentScriptingWrapper"));
+        assertTrue(html.contains("dc:modified"));
 
     }
 
@@ -241,6 +244,26 @@ public class TestAutomationKernelExecutor {
         assertTrue(payload.get("logs").get(0).get("message").asText().equals("Yo"));
         assertTrue(payload.get("asserts").get(0).get("message").asText().equals("MyAssert"));
         //System.out.println(json);        
+    }
+
+
+    @Test
+    public void shouldRegisterListener() throws Exception {
+    	
+        OperationContext ctx = new OperationContext(session);
+
+        ctx.setInput(loadScript("eventlistener.js"));
+        String html = (String) automationService.run(ctx, AutomationKernelExecutor.ID);        
+        assertTrue(html.contains("Scripting.Listener"));
+        assertTrue(html.contains("compiled"));
+
+                
+        ctx.setInput(loadScript("listenertest.js"));
+        html = (String) automationService.run(ctx, AutomationKernelExecutor.ID);
+        
+        assertTrue(html.contains("from js listener"));
+        
+        System.out.println(html);
     }
 
 }

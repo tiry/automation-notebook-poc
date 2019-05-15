@@ -6,9 +6,13 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.nuxeo.automation.scripting.api.AutomationScriptingService;
+import org.nuxeo.automation.scripting.api.AutomationScriptingService.Session;
+import org.nuxeo.automation.scripting.internals.AutomationMapper;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.interactive.helpers.AssertHelper;
+import org.nuxeo.ecm.automation.interactive.helpers.NBDebug;
 import org.nuxeo.ecm.automation.interactive.helpers.NoteBookConsole;
+import org.nuxeo.ecm.automation.interactive.helpers.Simulator;
 import org.nuxeo.ecm.automation.notebook.PreProcessor;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
@@ -65,6 +69,8 @@ public class NBScriptExecutor {
 		NoteBookConsole.initMemoryLog();
 		AssertHelper.initMemoryLog();
 
+		Simulator simulator = new Simulator();
+		
 		PreProcessor preprocessor = new PreProcessor();
 		try {
 			PreProcessor.Result preProcessedCode = preprocessor.preprocessCode(content);
@@ -77,7 +83,10 @@ public class NBScriptExecutor {
 			Map<String, Object> params = new HashMap<>();
 
 			try {
-				result = service.get(ctx).run(script);
+				Session session = service.get(ctx);
+				session.adapt(AutomationMapper.class).put(Simulator.ID, simulator);
+				//session.adapt(typeof)
+				result = session.run(script);
 			} catch (NuxeoException e) {				
 				fillParams(params,t0);
 				return new ExecutionResult(e, params);
@@ -92,6 +101,7 @@ public class NBScriptExecutor {
 		} finally {
 			NoteBookConsole.cleanMemoryLog();
 			AssertHelper.cleanMemoryLog();
+			simulator.cleanup();
 		}
 	}
 

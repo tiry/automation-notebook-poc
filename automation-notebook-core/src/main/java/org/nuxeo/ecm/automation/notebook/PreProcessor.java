@@ -33,7 +33,15 @@ public class PreProcessor {
 		}
 				
 	}
+
+	protected String getDebugHelperCode() {
+
+		StringBuffer sb = new StringBuffer();
 		
+		sb.append("Debug.init(ctx);\n");
+		
+		return sb.toString();
+	}
 	public Result preprocessCode(String code) {
 		
 		Result result = new Result();		
@@ -73,7 +81,7 @@ public class PreProcessor {
 		        }       	
 	        }
         }
-        result.code=code;        
+        result.code=getDebugHelperCode() + code;        
 		return result;
 	}
 
