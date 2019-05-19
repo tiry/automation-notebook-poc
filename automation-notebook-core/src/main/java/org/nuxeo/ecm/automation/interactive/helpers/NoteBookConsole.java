@@ -3,7 +3,10 @@ package org.nuxeo.ecm.automation.interactive.helpers;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.nuxeo.automation.scripting.helper.Console;
 import org.nuxeo.ecm.webengine.JsonFactoryManager;
@@ -11,31 +14,81 @@ import org.nuxeo.runtime.api.Framework;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class NoteBookConsole extends Console {
-
-	protected static ThreadLocal<List<LogEntry>> memoryLog = new ThreadLocal<>();	
-		
-	public static List<LogEntry> initMemoryLog() {
-		memoryLog.set(new ArrayList<>());
-		return getMemoryLog();
-	}
-
-	public static void cleanMemoryLog() {
-		memoryLog.remove();
-	}
-
-	public static List<LogEntry> getMemoryLog() {
-		return new ArrayList(memoryLog.get());
+			
+	protected static ThreadLocal<String> traceID = new ThreadLocal<>();
+	
+	protected static ConcurrentHashMap<String, List<LogEntry>> logs = new ConcurrentHashMap<>();
+	
+	protected static ThreadLocal<List<String>> childrenTraceIds = new ThreadLocal<>();
+	
+	public static String getTraceId() {
+		if (traceID.get()==null) {
+			traceID.set(UUID.randomUUID().toString());
+		}
+		return traceID.get();
 	}
 	
-	protected static void debuglog(String message) {
-		List<LogEntry> msgs = memoryLog.get();
-		if (msgs==null) {
-			msgs = initMemoryLog();
-		}		
-		msgs.add(new LogEntry("INFO", message));		
+	public void iniTraceId(String id) {
+		if (traceID.get()==null) {
+			setTraceId(id);
+		}
+	}
+	
+	public static void setTraceId(String id) {
+		traceID.set(id);
+	}
+	
+	public static void register(String id) {
+		List<String> children = childrenTraceIds.get();
+		if (children==null) {
+			children = new ArrayList<>();
+			childrenTraceIds.set(children);
+		}
+		children.add(id);		
+	}
+	
+	public static List<LogEntry> getLogs() {
+		
+		List<LogEntry> result = logs.get(getTraceId());
+		int threadId=0;
+		if (result==null) {
+			result = new ArrayList<>();
+		}
+		if (childrenTraceIds.get()!=null) {
+			for (String child: childrenTraceIds.get()) {
+				threadId++;
+				List<LogEntry> childLogs = logs.get(child);
+				for (LogEntry entry : childLogs) {
+					entry.thread=threadId;
+					result.add(entry);
+				}
+				//if (childLogs!=null) {
+				//	result.addAll(childLogs);	
+				//}						
+			}
+		}
+
+		// put back in order
+		result.sort(new Comparator<LogEntry>() {
+
+			@Override
+			public int compare(LogEntry o1, LogEntry o2) {				
+				return o1.ts> o1.ts? 1: -1;
+			}
+		});
+		
+		return result;
+	}
+	
+	public static void cleanLogs() {
+		logs.remove(getTraceId());
+		if (childrenTraceIds.get()!=null) {
+			for (String child: childrenTraceIds.get()) {
+				logs.remove(child);		
+			}
+		}
 	}
 
     protected static String debugAsJson(Object ob) throws IOException {
@@ -51,10 +104,11 @@ public class NoteBookConsole extends Console {
     }
 
 	
-	protected void log(String level, String message) {
-		List<LogEntry> msgs = memoryLog.get();
+	protected static void log(String level, String message) {
+		List<LogEntry> msgs = logs.get(getTraceId());
 		if (msgs==null) {
-			msgs = initMemoryLog();
+			msgs = new ArrayList<>();
+			logs.put(getTraceId(), msgs);
 		}		
 		msgs.add(new LogEntry(level, message));
 	}
@@ -94,7 +148,11 @@ public class NoteBookConsole extends Console {
 		return jsonFactory;
 	}
     
-    public void asJson(Object ob) throws IOException {
+    public void logAsJson(Object ob) throws IOException {
+    	asJson(ob);
+    }
+    
+    public static void asJson(Object ob) throws IOException {
     	
     	StringWriter writer = new StringWriter();
 		JsonGenerator jg = getFactory().createGenerator(writer);
@@ -103,6 +161,6 @@ public class NoteBookConsole extends Console {
 		jg.writeObject(ob);
 		jg.flush();
 		
-		this.log(ob.getClass().getName() + ":" + writer.toString());
+		log("INFO",ob.getClass().getName() + ":" + writer.toString());
     }
 }

@@ -8,4 +8,4 @@ var doc = Repository.GetDocument(null, {
         "value" : "/default-domain"
     });
 
-Console.asJson(doc);    
+Console.logAsJson(doc);    

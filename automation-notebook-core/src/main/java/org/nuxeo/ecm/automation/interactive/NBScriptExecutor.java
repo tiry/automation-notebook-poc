@@ -10,7 +10,6 @@ import org.nuxeo.automation.scripting.api.AutomationScriptingService.Session;
 import org.nuxeo.automation.scripting.internals.AutomationMapper;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.interactive.helpers.AssertHelper;
-import org.nuxeo.ecm.automation.interactive.helpers.NBDebug;
 import org.nuxeo.ecm.automation.interactive.helpers.NoteBookConsole;
 import org.nuxeo.ecm.automation.interactive.helpers.Simulator;
 import org.nuxeo.ecm.automation.notebook.PreProcessor;
@@ -59,14 +58,13 @@ public class NBScriptExecutor {
 	protected void fillParams(Map<String, Object> params, long t0) {
 		long t1 = System.currentTimeMillis();
 		params.put(ExecutionResult.TIME_KEY, t1 - t0);
-		params.put(ExecutionResult.LOGS_KEY, NoteBookConsole.getMemoryLog());
+		params.put(ExecutionResult.LOGS_KEY, NoteBookConsole.getLogs());
 		params.put(ExecutionResult.ASSERTS_KEY, AssertHelper.getMemoryLog());
 	}
 	
 	public ExecutionResult run(OperationContext ctx, String content) throws Exception {
 
 		// init NB specific Helpers
-		NoteBookConsole.initMemoryLog();
 		AssertHelper.initMemoryLog();
 
 		Simulator simulator = new Simulator();
@@ -99,7 +97,7 @@ public class NBScriptExecutor {
 
 			return new ExecutionResult(result, params);
 		} finally {
-			NoteBookConsole.cleanMemoryLog();
+			NoteBookConsole.cleanLogs();
 			AssertHelper.cleanMemoryLog();
 			simulator.cleanup();
 		}

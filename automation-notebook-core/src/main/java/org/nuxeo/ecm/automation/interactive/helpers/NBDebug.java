@@ -25,9 +25,10 @@ public class NBDebug  implements ContextHelper {
 	
 	public void dumpCtx(Map<String, Object> ctx) throws IOException {
 		
-		NoteBookConsole.debuglog("Dumping ctx");
+		
+		NoteBookConsole.log("INFO","Dumping ctx");
 		if (ctx==null) {
-			NoteBookConsole.debuglog("NULL ctx");
+			NoteBookConsole.log("INFO","NULL ctx");
 			return;
 		}
 		StringBuffer sb = new StringBuffer();
@@ -53,7 +54,7 @@ public class NBDebug  implements ContextHelper {
 		
 		
 		//System.out.println("****" + sb.toString());
-		NoteBookConsole.debuglog(sb.toString());
+		NoteBookConsole.log("INFO", sb.toString());
 	}
 
 }

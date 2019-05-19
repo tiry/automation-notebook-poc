@@ -28,6 +28,8 @@ public class Simulator implements ContextHelper {
 		} else {
 			registry.putPostCommitEventHandler(descriptor);
 			asyncListeners.add(descriptor);
+			// hook on console for the target listener
+			NoteBookConsole.register(script);
 		}
 	}
 	

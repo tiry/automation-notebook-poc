@@ -44,12 +44,13 @@ public class PreProcessor {
 		return sb.toString();
 	}
 
-	protected String addWrapperCode(String code) {
+	protected String addWrapperCode(String id, String code) {
 
 		StringBuffer sb = new StringBuffer();
 		
 		sb.append("function run(input, params) {\n");
-		sb.append("  Console.log('*** inside Wrapper ***');\n");
+//		sb.append("  Console.iniTraceId('" + id + "')");
+		sb.append("  Console.log('*** inside Wrapper ***');\n");		
 		sb.append(getDebugHelperCode());
 		sb.append(code);
 		sb.append("  return run(input,params);\n");
@@ -100,7 +101,7 @@ public class PreProcessor {
         }
 
         if (result.type == BlocType.OPERATION) {
-        	code=addWrapperCode(code);
+        	code=addWrapperCode(result.id, code);
         	AutomationHelper.register(result.id, code);
         	result.code=code;
         } else {
