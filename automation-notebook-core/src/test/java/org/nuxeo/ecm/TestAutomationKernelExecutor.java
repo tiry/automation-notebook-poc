@@ -281,7 +281,7 @@ public class TestAutomationKernelExecutor {
         ctx.setInput(loadScript("asynclistenertest.js"));
         html = (String) automationService.run(ctx, AutomationKernelExecutor.ID);
 
-        //System.out.println(html);
+        System.out.println(html);
 
         // verify that we get all the logs
         assertTrue(html.contains("starting listener testing"));
@@ -289,12 +289,12 @@ public class TestAutomationKernelExecutor {
         assertTrue(html.contains("EventImpl"));
         assertTrue(html.contains("\"newDoc\""));
         assertTrue(html.contains("end of listener testing"));
+        assertTrue(html.contains("Introspection Example"));
+        assertTrue(html.contains("isMarkedForRollBack()"));        
         
         // verify that we can get info from an other thread!
         assertTrue(html.contains("[0]"));
-        assertTrue(html.contains("[1]"));
-        
-        
+        assertTrue(html.contains("[1]"));        
     }
 
 }

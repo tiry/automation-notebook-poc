@@ -6,4 +6,9 @@ function run(input, params) {
     Console.logAsJson(params);
 
     Debug.dumpCtx();
+    
+    Console.log("Introspection Example");
+    
+    Debug.introspect(ctx.Event);
+    
 }

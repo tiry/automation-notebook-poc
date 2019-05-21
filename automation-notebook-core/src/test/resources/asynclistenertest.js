@@ -3,7 +3,6 @@ Console.log("starting listener testing");
 
 simulator.registerListener('documentCreated','Scripting.Listener',false);
 
-
 var root = Repository.GetDocument(null, {
         "value" : "/"
     });
