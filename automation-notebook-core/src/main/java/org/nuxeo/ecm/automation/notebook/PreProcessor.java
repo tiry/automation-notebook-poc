@@ -49,7 +49,7 @@ public class PreProcessor {
 		StringBuffer sb = new StringBuffer();
 		
 		sb.append("function run(input, params) {\n");
-//		sb.append("  Console.iniTraceId('" + id + "')");
+		sb.append("  Console.iniTraceId('" + id + "');");
 		sb.append("  Console.log('*** inside Wrapper ***');\n");		
 		sb.append(getDebugHelperCode());
 		sb.append(code);

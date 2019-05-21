@@ -74,10 +74,17 @@ public class NoteBookConsole extends Console {
 		result.sort(new Comparator<LogEntry>() {
 
 			@Override
-			public int compare(LogEntry o1, LogEntry o2) {				
-				return o1.ts> o1.ts? 1: -1;
+			public int compare(LogEntry o1, LogEntry o2) {	
+				return Long.compare(o1.ts, o2.ts);
 			}
 		});
+		
+		if (result.size()>0) {
+			long t0=result.get(0).ts;
+			for (LogEntry entry : result) {
+				entry.ts-=t0;
+			}
+		}
 		
 		return result;
 	}

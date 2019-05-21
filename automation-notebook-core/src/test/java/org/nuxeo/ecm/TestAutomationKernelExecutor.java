@@ -268,7 +268,7 @@ public class TestAutomationKernelExecutor {
         assertTrue(html.contains("\"newDoc\""));        
     }
 
-    //@Test
+    @Test
     public void shouldRegisterAndDebugAsyncListener() throws Exception {
     	
         OperationContext ctx = new OperationContext(session);
@@ -277,19 +277,24 @@ public class TestAutomationKernelExecutor {
         String html = (String) automationService.run(ctx, AutomationKernelExecutor.ID);        
         assertTrue(html.contains("Scripting.Listener"));
         assertTrue(html.contains("compiled"));
-
                 
         ctx.setInput(loadScript("asynclistenertest.js"));
         html = (String) automationService.run(ctx, AutomationKernelExecutor.ID);
 
-        System.out.println(html);
-        
-        // need to find a way to collect logs from an other thread!
-        //assertTrue(html.contains("from js listener"));
-        //assertTrue(html.contains("EventImpl"));
-        //assertTrue(html.contains("\"newDoc\""));
-        
+        //System.out.println(html);
 
+        // verify that we get all the logs
+        assertTrue(html.contains("starting listener testing"));
+        assertTrue(html.contains("from js listener"));
+        assertTrue(html.contains("EventImpl"));
+        assertTrue(html.contains("\"newDoc\""));
+        assertTrue(html.contains("end of listener testing"));
+        
+        // verify that we can get info from an other thread!
+        assertTrue(html.contains("[0]"));
+        assertTrue(html.contains("[1]"));
+        
+        
     }
 
 }

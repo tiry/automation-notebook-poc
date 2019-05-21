@@ -14,12 +14,15 @@
 
 <#list logs as log>
     <#if log.level == "ERR">
-      <div style="color:red"> ${log.message} </div>
+      <div style="color:red"> 
     <#elseif log.level == "WARN">
-      <div style="color:orange"> ${log.message} </div>
+      <div style="color:orange">
     <#elseif log.level == "INFO">
-      <div style="color:black"> ${log.message} </div>
+      <div style="color:black">
     <#elseif log.level == "TRC" >
-      <div style="color:#999999"> ${log.message} </div>
+      <div style="color:#999999"> 
     </#if>
+    
+      ${log.ts} - [${log.thread}] : ${log.message}
+    </div>
  </#list>

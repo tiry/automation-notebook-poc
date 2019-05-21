@@ -2,7 +2,7 @@ package org.nuxeo.ecm.automation.interactive.helpers;
 
 public class LogEntry {
 
-	protected final long ts;
+	protected long ts;
 	
 	protected final String level;
 	
@@ -26,6 +26,14 @@ public class LogEntry {
 	
 	public long getTS() {
 		return ts;
+	}
+
+	public long getTs() {
+		return ts;
+	}
+
+	public int getThread() {
+		return thread;
 	}
 	
 	
