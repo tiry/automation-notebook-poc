@@ -11,7 +11,7 @@ import org.nuxeo.automation.scripting.internals.AutomationMapper;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.interactive.helpers.AssertHelper;
 import org.nuxeo.ecm.automation.interactive.helpers.NoteBookConsole;
-import org.nuxeo.ecm.automation.interactive.helpers.Simulator;
+import org.nuxeo.ecm.automation.interactive.helpers.TestHarness;
 import org.nuxeo.ecm.automation.notebook.PreProcessor;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
@@ -66,8 +66,7 @@ public class NBScriptExecutor {
 
 		// init NB specific Helpers
 		AssertHelper.initMemoryLog();
-
-		Simulator simulator = new Simulator();
+		TestHarness harness = new TestHarness();
 		
 		PreProcessor preprocessor = new PreProcessor();
 		try {
@@ -82,7 +81,7 @@ public class NBScriptExecutor {
 
 			try {
 				Session session = service.get(ctx);
-				session.adapt(AutomationMapper.class).put(Simulator.ID, simulator);
+				session.adapt(AutomationMapper.class).put(TestHarness.ID, harness);
 				//session.adapt(typeof)
 				result = session.run(script);
 			} catch (NuxeoException e) {				
@@ -99,7 +98,7 @@ public class NBScriptExecutor {
 		} finally {
 			NoteBookConsole.cleanLogs();
 			AssertHelper.cleanMemoryLog();
-			simulator.cleanup();
+			harness.cleanup();
 		}
 	}
 

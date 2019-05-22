@@ -10,9 +10,9 @@ import org.nuxeo.ecm.core.event.EventService;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.transaction.TransactionHelper;
 
-public class Simulator implements ContextHelper {
+public class TestHarness implements ContextHelper {
 	
-	public static final String ID = "simulator";
+	public static final String ID = "Harness";
 	
 	protected List<EventHandler> syncListeners = new ArrayList<>();
 	protected List<EventHandler> asyncListeners = new ArrayList<>();	

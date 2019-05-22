@@ -1,5 +1,5 @@
 
-simulator.registerListener('documentCreated','Scripting.Listener',true);
+Harness.registerListener('documentCreated','Scripting.Listener',true);
 
 
 var root = Repository.GetDocument(null, {
