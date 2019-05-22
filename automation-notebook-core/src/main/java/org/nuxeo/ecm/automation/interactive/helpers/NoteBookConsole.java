@@ -59,7 +59,7 @@ public class NoteBookConsole extends Console {
 		if (childrenTraceIds.get()!=null) {
 			for (String child: childrenTraceIds.get()) {
 				threadId++;
-				List<LogEntry> childLogs = logs.get(child);
+				List<LogEntry> childLogs = new ArrayList<>(logs.get(child));
 				for (LogEntry entry : childLogs) {
 					entry.thread=threadId;
 					result.add(entry);

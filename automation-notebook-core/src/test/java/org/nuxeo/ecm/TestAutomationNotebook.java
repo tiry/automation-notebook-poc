@@ -122,13 +122,13 @@ public class TestAutomationNotebook {
 
 		String json = ans.validateNotebook(session, "testNBListener");
 		
-		System.out.println(json);
+		//System.out.println(json);
 
 		JsonNode validation = objectMapper.readTree(json);
-		//assertFalse(validation.get("summary").get("success").asBoolean());
-		//assertEquals(0, validation.get("summary").get("failedCount").asInt());
-		//assertEquals(3, validation.get("summary").get("assertCount").asInt());
-		//assertEquals(1, validation.get("summary").get("errorCount").asInt());
+		assertTrue(validation.get("summary").get("success").asBoolean());
+		assertEquals(0, validation.get("summary").get("failedCount").asInt());
+		assertEquals(2, validation.get("summary").get("assertCount").asInt());
+		assertEquals(0, validation.get("summary").get("errorCount").asInt());
 
 	}
 
