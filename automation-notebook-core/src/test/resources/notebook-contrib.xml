@@ -6,6 +6,8 @@
     <automationNotebook name="testNB" src="nb/TestingAutomation.ipynb"/>
     <automationNotebook name="testNBErr" src="nb/TestingAutomationWithError.ipynb"/>
     <automationNotebook name="testNBFail" src="nb/TestingAutomationWithFailure.ipynb"/>
+    <automationNotebook name="testNBListener" src="nb/Listeners.ipynb"/>
+
   </extension>
 
 </component>

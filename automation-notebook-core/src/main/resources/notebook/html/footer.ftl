@@ -22,7 +22,8 @@
     <#elseif log.level == "TRC" >
       <div style="color:#999999"> 
     </#if>
-    
-      ${log.ts} - [${log.thread}] : ${log.message}
+      <pre>
+      ${log.ts?string["000000"]} - [${log.thread}] : ${log.message}
+      </pre>
     </div>
  </#list>

@@ -68,7 +68,7 @@ public class AutomationNotebookDescriptor  implements Descriptor{
 	public List<PreProcessor.Result> getSetupCells() {
 		List<PreProcessor.Result> cells = new ArrayList<>();
 		for (PreProcessor.Result result: getCells()) {
-			if (result.getType().equals(PreProcessor.BlocType.SETUP)) {
+			if (PreProcessor.BlocType.SETUP.equals(result.getType())) {
 				cells.add(result);
 			}
 		}
@@ -78,7 +78,7 @@ public class AutomationNotebookDescriptor  implements Descriptor{
 	public List<PreProcessor.Result> getTestCells() {
 		List<PreProcessor.Result> cells = new ArrayList<>();
 		for (PreProcessor.Result result: getCells()) {
-			if (result.getType().equals(PreProcessor.BlocType.TEST)) {
+			if (PreProcessor.BlocType.TEST.equals(result.getType())) {
 				cells.add(result);
 			}
 		}
@@ -88,7 +88,7 @@ public class AutomationNotebookDescriptor  implements Descriptor{
 	public List<PreProcessor.Result> getOpCells() {
 		List<PreProcessor.Result> cells = new ArrayList<>();
 		for (PreProcessor.Result result: getCells()) {
-			if (result.getType().equals(PreProcessor.BlocType.OPERATION)) {
+			if (PreProcessor.BlocType.OPERATION.equals(result.getType())) {
 				cells.add(result);
 			}
 		}

@@ -114,4 +114,22 @@ public class TestAutomationNotebook {
 
 	}
 
+	
+	@Test
+	public void validateNoteBookWithListener() throws Exception {
+		AutomationNotebookService ans = Framework.getService(AutomationNotebookService.class);
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		String json = ans.validateNotebook(session, "testNBListener");
+		
+		System.out.println(json);
+
+		JsonNode validation = objectMapper.readTree(json);
+		//assertFalse(validation.get("summary").get("success").asBoolean());
+		//assertEquals(0, validation.get("summary").get("failedCount").asInt());
+		//assertEquals(3, validation.get("summary").get("assertCount").asInt());
+		//assertEquals(1, validation.get("summary").get("errorCount").asInt());
+
+	}
+
 }
