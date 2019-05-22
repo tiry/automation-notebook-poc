@@ -57,12 +57,18 @@ public class NoteBookConsole extends Console {
 			result = new ArrayList<>();
 		}
 		if (childrenTraceIds.get()!=null) {
-			for (String child: childrenTraceIds.get()) {
-				threadId++;
-				List<LogEntry> childLogs = new ArrayList<>(logs.get(child));
-				for (LogEntry entry : childLogs) {
-					entry.thread=threadId;
-					result.add(entry);
+			for (String child: childrenTraceIds.get()) {				
+				List<LogEntry> childLogs = logs.get(child);
+				if (childLogs!=null && childLogs.size()>0) {
+					threadId++;
+					if (threadId==2) {
+						System.out.println("Arg!");
+					}
+					childLogs = new ArrayList<>(childLogs);
+					for (LogEntry entry : childLogs) {
+						entry.thread=threadId;
+						result.add(entry);
+					}
 				}
 				//if (childLogs!=null) {
 				//	result.addAll(childLogs);	
@@ -95,6 +101,7 @@ public class NoteBookConsole extends Console {
 			for (String child: childrenTraceIds.get()) {
 				logs.remove(child);		
 			}
+			childrenTraceIds.remove();
 		}
 	}
 
